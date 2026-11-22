@@ -6,21 +6,26 @@ import { useState } from "react";
 
 export default function Topbar() {
   const pathname = usePathname();
-  const { notifications, markNotificationRead } = useApp();
+  const { notifications } = useApp();
   const [showNotifs, setShowNotifs] = useState(false);
-  const isAdmin = pathname.startsWith("/admin");
-  const isOperator = pathname.startsWith("/operator");
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  let title = "Good Morning, Alex";
+  let subtitle = "Here is your logistics overview.";
+  
+  if (pathname.startsWith("/admin")) {
+    title = "System Administrator";
+    subtitle = "Platform overview and user management.";
+  } else if (pathname.startsWith("/operator")) {
+    title = "Operator Portal";
+    subtitle = "Manage your fleet and bookings.";
+  }
 
   return (
     <header className="flex h-20 items-center justify-between px-8 bg-white border-b border-slate-200 sticky top-0 z-20">
       <div>
-        <h1 className="text-xl font-bold text-brand-navy">
-          {isAdmin ? "System Administrator" : isOperator ? "Operator Portal" : "Good Morning, Alex"}
-        </h1>
-        <p className="text-sm text-slate-500">
-          {isAdmin ? "Platform overview." : isOperator ? "Manage your fleet and bookings." : "Here is your logistics overview."}
-        </p>
+        <h1 className="text-xl font-bold text-brand-navy">{title}</h1>
+        <p className="text-sm text-slate-500">{subtitle}</p>
       </div>
       
       <div className="flex items-center gap-6">
@@ -29,7 +34,6 @@ export default function Topbar() {
           <input type="text" placeholder="Search..." className="w-64 rounded-full bg-brand-light py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue" />
         </div>
         
-        {/* Notifications Dropdown */}
         <div className="relative">
           <button onClick={() => setShowNotifs(!showNotifs)} className="relative text-slate-500 hover:text-brand-navy transition">
             <Bell size={24} />
@@ -42,7 +46,7 @@ export default function Topbar() {
           
           {showNotifs && (
             <div className="absolute right-0 mt-4 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50">
-              <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div className="p-4 border-b border-slate-100 bg-slate-50">
                 <p className="font-bold text-brand-navy">Notifications</p>
               </div>
               <div className="max-h-96 overflow-y-auto">
@@ -50,15 +54,9 @@ export default function Topbar() {
                   <p className="p-4 text-center text-sm text-slate-500">No new notifications</p>
                 ) : (
                   notifications.map(n => (
-                    <div key={n.id} onClick={() => markNotificationRead(n.id)} className={`p-4 border-b border-slate-100 cursor-pointer hover:bg-slate-50 transition ${!n.read ? "bg-blue-50/50" : ""}`}>
-                      <div className="flex gap-3">
-                        <div className={`mt-1 shrink-0 ${n.type === 'booking' ? 'text-brand-orange' : 'text-brand-blue'}`}><CheckCircle2 size={16}/></div>
-                        <div>
-                          <p className="text-sm font-semibold text-brand-navy">{n.title}</p>
-                          <p className="text-xs text-slate-500 mt-1">{n.message}</p>
-                          <p className="text-[10px] text-slate-400 mt-2">{n.time}</p>
-                        </div>
-                      </div>
+                    <div key={n.id} className="p-4 border-b border-slate-100 hover:bg-slate-50 transition">
+                      <p className="text-sm font-semibold text-brand-navy">{n.title}</p>
+                      <p className="text-xs text-slate-500 mt-1">{n.message}</p>
                     </div>
                   ))
                 )}

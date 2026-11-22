@@ -1,51 +1,47 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Truck, Package, Users, LayoutDashboard, Home } from "lucide-react";
+import { LayoutDashboard, PackageSearch, Map, Settings, LogOut } from "lucide-react";
+import Logo from "./Logo";
 
-const userLinks = [
-  { href: "/user/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/user/book", label: "Book Shipment", icon: Package },
-  { href: "/user/shipments", label: "My Shipments", icon: Truck },
-];
-const adminLinks = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/shipments", label: "Shipments", icon: Truck },
-  { href: "/admin/users", label: "Users", icon: Users },
+const links = [
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/loadboard", label: "Load Board", icon: PackageSearch },
+  { href: "/tracking", label: "Live Tracking", icon: Map },
 ];
 
-export default function Sidebar({ mode }: { mode: "user" | "admin" }) {
+export default function Sidebar() {
   const pathname = usePathname();
-  const links = mode === "user" ? userLinks : adminLinks;
 
   return (
-    <aside className="flex w-64 flex-col border-r border-slate-200 bg-white">
-      <div className="flex items-center gap-2 px-6 py-5 border-b border-slate-200">
-        <div className="grid h-9 w-9 place-items-center rounded-lg bg-brand text-white font-bold">LL</div>
-        <div>
-          <p className="font-semibold leading-tight">LoadLoop</p>
-          <p className="text-xs text-slate-500 capitalize">{mode} portal</p>
-        </div>
+    <aside className="flex w-64 flex-col border-r border-slate-200 bg-white h-screen sticky top-0">
+      <div className="flex h-20 items-center px-6 border-b border-slate-100">
+        <Logo />
       </div>
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="flex-1 space-y-2 p-4 mt-4">
         {links.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(href + "/");
+          const active = pathname === href;
           return (
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                active ? "bg-brand text-white" : "text-slate-600 hover:bg-slate-100"
+              className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
+                active ? "bg-brand-navy text-white shadow-md" : "text-slate-500 hover:bg-brand-light hover:text-brand-navy"
               }`}
             >
-              <Icon size={18} /> {label}
+              <Icon size={20} className={active ? "text-brand-orange" : ""} /> {label}
             </Link>
           );
         })}
       </nav>
-      <Link href="/" className="m-3 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">
-        <Home size={18} /> Switch Portal
-      </Link>
+      <div className="p-4 border-t border-slate-100 space-y-2">
+        <Link href="#" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-500 hover:bg-brand-light">
+          <Settings size={20} /> Settings
+        </Link>
+        <Link href="/" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-500 hover:bg-brand-light hover:text-rose-500 transition-colors">
+          <LogOut size={20} /> Log out
+        </Link>
+      </div>
     </aside>
   );
 }

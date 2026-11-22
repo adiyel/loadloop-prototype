@@ -9,17 +9,18 @@ export default function RegisterTruck() {
   const [formData, setFormData] = useState({ 
     plate: "", 
     type: "Closed Van", 
-    maxCapacity: "", // Changed to match new type
+    maxWeight: "", 
+    maxVolume: "", 
     route: "", 
     departure: "" 
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Convert maxCapacity from string to number as expected by the context
     addTruck({
       ...formData,
-      maxCapacity: Number(formData.maxCapacity)
+      maxWeight: Number(formData.maxWeight),
+      maxVolume: Number(formData.maxVolume),
     });
     router.push("/operator");
   };
@@ -38,14 +39,24 @@ export default function RegisterTruck() {
           <div>
             <label className="block text-sm font-semibold mb-1">Truck Type</label>
             <select className="w-full p-2.5 border rounded-lg bg-slate-50 focus:bg-white" onChange={e => setFormData({...formData, type: e.target.value})}>
-              <option>Closed Van</option><option>Flatbed</option><option>Reefer</option>
+              <option>Closed Van</option>
+              <option>Flatbed</option>
+              <option>Reefer</option>
             </select>
           </div>
         </div>
-        <div>
-          <label className="block text-sm font-semibold mb-1">Max Capacity (kg)</label>
-          <input required type="number" placeholder="e.g., 2000" className="w-full p-2.5 border rounded-lg bg-slate-50 focus:bg-white" onChange={e => setFormData({...formData, maxCapacity: e.target.value})} />
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold mb-1">Max Weight (kg)</label>
+            <input required type="number" placeholder="e.g., 2000" className="w-full p-2.5 border rounded-lg bg-slate-50 focus:bg-white" onChange={e => setFormData({...formData, maxWeight: e.target.value})} />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold mb-1">Max Volume (m³)</label>
+            <input required type="number" placeholder="e.g., 12" className="w-full p-2.5 border rounded-lg bg-slate-50 focus:bg-white" onChange={e => setFormData({...formData, maxVolume: e.target.value})} />
+          </div>
         </div>
+        
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold mb-1">Assigned Route</label>
@@ -56,6 +67,7 @@ export default function RegisterTruck() {
             <input required type="text" placeholder="Daily 8:00 AM" className="w-full p-2.5 border rounded-lg bg-slate-50 focus:bg-white" onChange={e => setFormData({...formData, departure: e.target.value})} />
           </div>
         </div>
+        
         <button type="submit" className="w-full bg-brand-orange text-white py-3 rounded-lg font-bold hover:bg-orange-600 transition mt-4">
           Publish Capacity
         </button>

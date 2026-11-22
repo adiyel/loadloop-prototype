@@ -33,7 +33,7 @@ export default function OperatorDashboard() {
                 <p className="font-bold text-brand-navy">{t.id} ({t.plate})</p>
                 <span className={`px-2 py-1 rounded text-xs font-bold ${t.status === "Available" ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"}`}>{t.status}</span>
               </div>
-              <p className="text-sm text-slate-600">{t.type} - {t.capacity}</p>
+              <p className="text-sm text-slate-600">{t.type} - Max: {t.maxCapacity} kg</p>
               <p className="text-sm text-slate-500 mt-2">Route: {t.route} ({t.departure})</p>
             </div>
           ))}

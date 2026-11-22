@@ -3,7 +3,7 @@ import { useApp } from "@/context/AppContext";
 import Link from "next/link";
 
 export default function MyShipments() {
-  const { shipments } = useApp();
+  const { shipments, bookings } = useApp();
 
   return (
     <div className="space-y-6">
@@ -27,24 +27,28 @@ export default function MyShipments() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {shipments.map((s) => (
-              <tr key={s.id} className="hover:bg-slate-50">
-                <td className="px-6 py-4 font-bold text-brand-navy">{s.id}</td>
-                <td className="px-6 py-4">{s.origin} to {s.dest}</td>
-                <td className="px-6 py-4 text-slate-500">{s.operator}</td>
-                <td className="px-6 py-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    s.status === "Delivered" ? "bg-green-100 text-green-700" :
-                    s.status === "In Transit" ? "bg-blue-100 text-blue-700" :
-                    "bg-orange-100 text-orange-700"
-                  }`}>{s.status}</span>
-                </td>
-                <td className="px-6 py-4 font-semibold">{s.cost}</td>
-                <td className="px-6 py-4">
-                  <Link href={`/dashboard/shipments/${s.id}`} className="text-brand-blue font-semibold hover:underline">Details</Link>
-                </td>
-              </tr>
-            ))}
+            {shipments.map((s) => {
+              const booking = bookings.find(b => b.shipmentId === s.id);
+              return (
+                <tr key={s.id} className="hover:bg-slate-50">
+                  <td className="px-6 py-4 font-bold text-brand-navy">{s.id}</td>
+                  <td className="px-6 py-4">{s.origin} to {s.dest}</td>
+                  <td className="px-6 py-4 text-slate-500">{booking ? booking.operator : "Searching..."}</td>
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      s.status === "Delivered" ? "bg-green-100 text-green-700" :
+                      s.status === "In Transit" ? "bg-blue-100 text-blue-700" :
+                      s.status === "Matched" ? "bg-teal-100 text-teal-700" :
+                      "bg-orange-100 text-orange-700"
+                    }`}>{s.status}</span>
+                  </td>
+                  <td className="px-6 py-4 font-semibold">{booking ? `₱${booking.cost.toLocaleString()}` : "TBD"}</td>
+                  <td className="px-6 py-4">
+                    <Link href={`/dashboard/shipments/${s.id}`} className="text-brand-blue font-semibold hover:underline">Details</Link>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

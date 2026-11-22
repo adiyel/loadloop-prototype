@@ -13,7 +13,7 @@ export default function Landing() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-brand-blue/5 rounded-full blur-3xl -z-10"></div>
       
       <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto relative z-10">
-        <Logo className="h-10" />
+        <Logo />
         
         {/* Navigation Links */}
         <div className="hidden md:flex gap-8 text-sm font-bold text-slate-600">

@@ -5,10 +5,13 @@ import { Truck, CheckCircle2, MapPin } from "lucide-react";
 
 export default function ShipmentDetails() {
   const { id } = useParams();
-  const { shipments } = useApp();
+  const { shipments, bookings } = useApp(); // Added bookings here
+  
   const shipment = shipments.find(s => s.id === id);
-
   if (!shipment) return notFound();
+
+  // Find the booking associated with this shipment to get cost and operator
+  const booking = bookings.find(b => b.shipmentId === shipment.id);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -24,10 +27,10 @@ export default function ShipmentDetails() {
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
           <h2 className="font-bold text-lg mb-4 text-brand-navy">Shipment Info</h2>
           <div className="space-y-2 text-sm">
-            <p><span className="text-slate-500">Operator:</span> {shipment.operator}</p>
+            <p><span className="text-slate-500">Operator:</span> {booking ? booking.operator : "Unassigned"}</p>
             <p><span className="text-slate-500">Cargo:</span> {shipment.cargo}</p>
-            <p><span className="text-slate-500">Weight:</span> {shipment.weight}</p>
-            <p><span className="text-slate-500">Est. Cost:</span> {shipment.cost}</p>
+            <p><span className="text-slate-500">Weight:</span> {shipment.weight} kg</p>
+            <p><span className="text-slate-500">Est. Cost:</span> {booking ? `₱${booking.cost.toLocaleString()}` : "Pending Match"}</p>
           </div>
         </div>
         
@@ -35,7 +38,7 @@ export default function ShipmentDetails() {
           <h2 className="font-bold text-lg mb-4 text-brand-navy">Tracking Timeline</h2>
           <div className="space-y-4">
              <div className="flex gap-3"><CheckCircle2 className="text-brand-blue shrink-0" size={20}/> <div><p className="font-semibold">Booking Confirmed</p></div></div>
-             <div className="flex gap-3"><Truck className={shipment.status !== "Pending" ? "text-brand-blue" : "text-slate-300"} size={20}/> <div><p className={shipment.status !== "Pending" ? "font-semibold" : "text-slate-400"}>In Transit</p></div></div>
+             <div className="flex gap-3"><Truck className={shipment.status !== "Pending" && shipment.status !== "Matched" ? "text-brand-blue" : "text-slate-300"} size={20}/> <div><p className={shipment.status !== "Pending" && shipment.status !== "Matched" ? "font-semibold" : "text-slate-400"}>In Transit</p></div></div>
              <div className="flex gap-3"><MapPin className={shipment.status === "Delivered" ? "text-brand-blue" : "text-slate-300"} size={20}/> <div><p className={shipment.status === "Delivered" ? "font-semibold" : "text-slate-400"}>Delivered</p></div></div>
           </div>
         </div>

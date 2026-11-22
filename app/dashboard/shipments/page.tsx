@@ -22,27 +22,28 @@ export default function MyShipments() {
               <th className="px-6 py-4 font-medium">Route</th>
               <th className="px-6 py-4 font-medium">Operator</th>
               <th className="px-6 py-4 font-medium">Status</th>
-              <th className="px-6 py-4 font-medium">Cost</th>
+              <th className="px-6 py-4 font-medium">Total Cost</th>
               <th className="px-6 py-4 font-medium">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {shipments.map((s) => {
               const booking = bookings.find(b => b.shipmentId === s.id);
+              
               return (
                 <tr key={s.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4 font-bold text-brand-navy">{s.id}</td>
                   <td className="px-6 py-4">{s.origin} to {s.dest}</td>
-                  <td className="px-6 py-4 text-slate-500">{booking ? booking.operator : "Searching..."}</td>
+                  <td className="px-6 py-4 text-slate-500">{booking?.operator || "Unassigned"}</td>
                   <td className="px-6 py-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                       s.status === "Delivered" ? "bg-green-100 text-green-700" :
                       s.status === "In Transit" ? "bg-blue-100 text-blue-700" :
-                      s.status === "Matched" ? "bg-teal-100 text-teal-700" :
+                      s.status === "Cancelled" ? "bg-rose-100 text-rose-700" :
                       "bg-orange-100 text-orange-700"
                     }`}>{s.status}</span>
                   </td>
-                  <td className="px-6 py-4 font-semibold">{booking ? `₱${booking.cost.toLocaleString()}` : "TBD"}</td>
+                  <td className="px-6 py-4 font-semibold">{booking ? `₱${booking.totalCost.toLocaleString()}` : "TBD"}</td>
                   <td className="px-6 py-4">
                     <Link href={`/dashboard/shipments/${s.id}`} className="text-brand-blue font-semibold hover:underline">Details</Link>
                   </td>

@@ -2,22 +2,25 @@
 import React, { createContext, useContext, useState } from "react";
 
 export type Shipment = {
-  id: string; origin: string; dest: string; cargo: string; weight: number;
-  status: "Pending" | "Matched" | "Picked Up" | "In Transit" | "Delivered" | "Cancelled";
+  id: string; msmeName: string; origin: string; dest: string; cargo: string; 
+  weight: number; volume: number;
+  status: "Pending" | "Matched" | "In Transit" | "Delivered" | "Cancelled";
   date: string;
   timeline: { status: string; time: string }[];
 };
 
 export type Truck = {
-  id: string; plate: string; type: string; maxCapacity: number; 
-  currentLoad: number; route: string; departure: string; 
+  id: string; plate: string; type: string; maxWeight: number; maxVolume: number;
+  currentWeight: number; currentVolume: number; 
+  route: string; departure: string; 
   status: "Available" | "In Transit" | "Maintenance";
   verificationStatus: "Pending" | "Verified" | "Rejected";
 };
 
 export type Booking = {
   id: string; shipmentId: string; truckId: string; 
-  operator: string; cost: number; platformFee: number;
+  operator: string; 
+  totalCost: number; platformFee: number; operatorPayout: number;
   status: "Pending" | "Confirmed" | "In Transit" | "Delivered" | "Rejected" | "Cancelled";
 };
 
@@ -32,41 +35,37 @@ type AppContextType = {
   bookings: Booking[];
   notifications: Notification[];
   addShipment: (s: Omit<Shipment, "id" | "status" | "timeline">) => void;
-  addTruck: (t: Omit<Truck, "id" | "status" | "currentLoad" | "verificationStatus">) => void;
+  addTruck: (t: Omit<Truck, "id" | "status" | "currentWeight" | "currentVolume" | "verificationStatus">) => void;
   verifyTruck: (truckId: string, status: "Verified" | "Rejected") => void;
   createBooking: (shipmentId: string, truckId: string, cost: number) => void;
   updateBookingStatus: (bookingId: string, status: Booking["status"]) => void;
   cancelBooking: (bookingId: string) => void;
   addNotification: (title: string, message: string, type: Notification["type"]) => void;
-  markNotificationRead: (id: string) => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  // Pre-seeded to show a successful shared truck scenario
   const [shipments, setShipments] = useState<Shipment[]>([
-    { id: "SHP-1001", origin: "Manila", dest: "Batangas", cargo: "Furniture", weight: 180, status: "Matched", date: "2025-11-28", timeline: [{ status: "Booking Created", time: "Nov 27, 9:00 AM" }, { status: "Matched with Truck", time: "Nov 27, 10:00 AM" }] },
+    { id: "SHP-1001", msmeName: "Aling Nena's Bakery", origin: "Manila", dest: "Batangas", cargo: "Flour Sacks", weight: 500, volume: 2, status: "Matched", date: "2025-11-28", timeline: [{ status: "Booking Created", time: "Nov 27, 9:00 AM" }] },
+    { id: "SHP-1002", msmeName: "TechHub Gadgets", origin: "Manila", dest: "Batangas", cargo: "Monitors", weight: 300, volume: 3, status: "Matched", date: "2025-11-28", timeline: [{ status: "Booking Created", time: "Nov 27, 10:00 AM" }] },
   ]);
 
   const [trucks, setTrucks] = useState<Truck[]>([
-    { id: "TRK-01", plate: "ABC-123", type: "Closed Van", maxCapacity: 2000, currentLoad: 180, route: "Manila - Batangas", departure: "Daily 8:00 AM", status: "Available", verificationStatus: "Verified" },
-    { id: "TRK-02", plate: "XYZ-789", type: "Flatbed", maxCapacity: 5000, currentLoad: 0, route: "Cebu - Mandaue", departure: "Mon/Wed/Fri", status: "Available", verificationStatus: "Pending" },
+    { id: "TRK-01", plate: "ABC-123", type: "Closed Van", maxWeight: 2000, maxVolume: 12, currentWeight: 800, currentVolume: 5, route: "Manila - Batangas", departure: "Daily 8:00 AM", status: "Available", verificationStatus: "Verified" },
+    { id: "TRK-02", plate: "XYZ-789", type: "Flatbed", maxWeight: 5000, maxVolume: 20, currentWeight: 0, currentVolume: 0, route: "Cebu - Mandaue", departure: "Mon/Wed/Fri", status: "Available", verificationStatus: "Pending" },
   ]);
 
   const [bookings, setBookings] = useState<Booking[]>([
-    { id: "BKG-5001", shipmentId: "SHP-1001", truckId: "TRK-01", operator: "Northstar Trucking", cost: 3200, platformFee: 160, status: "Confirmed" }
+    { id: "BKG-5001", shipmentId: "SHP-1001", truckId: "TRK-01", operator: "Northstar Trucking", totalCost: 3200, platformFee: 160, operatorPayout: 3040, status: "Confirmed" },
+    { id: "BKG-5002", shipmentId: "SHP-1002", truckId: "TRK-01", operator: "Northstar Trucking", totalCost: 2500, platformFee: 125, operatorPayout: 2375, status: "Confirmed" }
   ]);
 
-  const [notifications, setNotifications] = useState<Notification[]>([
-    { id: "NOT-1", title: "Welcome to LoadLoop", message: "Your account is ready.", time: "1 hour ago", read: false, type: "system" }
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const addNotification = (title: string, message: string, type: Notification["type"]) => {
     setNotifications(prev => [{ id: `NOT-${Date.now()}`, title, message, time: "Just now", read: false, type }, ...prev]);
-  };
-
-  const markNotificationRead = (id: string) => {
-    setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
   };
 
   const addShipment = (data: Omit<Shipment, "id" | "status" | "timeline">) => {
@@ -75,30 +74,31 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     addNotification("Shipment Created", `Your request for ${data.cargo} is now looking for a match.`, "system");
   };
 
-  const addTruck = (data: Omit<Truck, "id" | "status" | "currentLoad" | "verificationStatus">) => {
-    const newTruck: Truck = { ...data, id: `TRK-${Math.floor(Math.random() * 90) + 10}`, currentLoad: 0, status: "Available", verificationStatus: "Pending" };
+  const addTruck = (data: Omit<Truck, "id" | "status" | "currentWeight" | "currentVolume" | "verificationStatus">) => {
+    const newTruck: Truck = { ...data, id: `TRK-${Math.floor(Math.random() * 90) + 10}`, currentWeight: 0, currentVolume: 0, status: "Available", verificationStatus: "Pending" };
     setTrucks([...trucks, newTruck]);
     addNotification("Truck Submitted", `Truck ${data.plate} is pending admin verification.`, "system");
   };
 
   const verifyTruck = (truckId: string, status: "Verified" | "Rejected") => {
     setTrucks(trucks.map(t => t.id === truckId ? { ...t, verificationStatus: status } : t));
-    addNotification(`Truck ${status}`, `Truck ${truckId} verification was ${status.toLowerCase()}.`, "system");
   };
 
   const createBooking = (shipmentId: string, truckId: string, cost: number) => {
-    const truck = trucks.find(t => t.id === truckId);
     const shipment = shipments.find(s => s.id === shipmentId);
-    if (!truck || !shipment) return;
+    if (!shipment) return;
 
+    const fee = cost * 0.05;
     const newBooking: Booking = {
       id: `BKG-${Math.floor(Math.random() * 9000) + 1000}`,
-      shipmentId, truckId, operator: "Northstar Trucking", cost, platformFee: cost * 0.05, status: "Pending"
+      shipmentId, truckId, operator: "Northstar Trucking", 
+      totalCost: cost, platformFee: fee, operatorPayout: cost - fee, 
+      status: "Pending"
     };
 
     setBookings([newBooking, ...bookings]);
     setShipments(shipments.map(s => s.id === shipmentId ? { ...s, status: "Matched", timeline: [...s.timeline, { status: "Matched with Truck", time: "Just now" }] } : s));
-    addNotification("Booking Requested", `Waiting for operator to accept booking for ${shipmentId}.`, "booking");
+    addNotification("Booking Requested", `Waiting for operator to accept booking.`, "booking");
   };
 
   const updateBookingStatus = (bookingId: string, status: Booking["status"]) => {
@@ -108,7 +108,30 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setBookings(bookings.map(b => b.id === bookingId ? { ...b, status } : b));
     
     const shipStatus = status === "Confirmed" ? "Matched" : status === "Rejected" ? "Pending" : status;
-    const truckStatus = status === "In Transit" ? "In Transit" : status === "Delivered" ? "Available" : undefined;
+    
+    // Capacity Logic: Only add capacity when transitioning from Pending to Confirmed
+    if (status === "Confirmed" && booking.status === "Pending") {
+      const shipment = shipments.find(s => s.id === booking.shipmentId);
+      if (shipment) {
+        setTrucks(trucks.map(t => t.id === booking.truckId ? { 
+          ...t, 
+          currentWeight: t.currentWeight + shipment.weight,
+          currentVolume: t.currentVolume + shipment.volume
+        } : t));
+      }
+    }
+
+    // Capacity Logic: Restore capacity if Rejected after being Confirmed
+    if (status === "Rejected" && booking.status === "Confirmed") {
+       const shipment = shipments.find(s => s.id === booking.shipmentId);
+       if (shipment) {
+         setTrucks(trucks.map(t => t.id === booking.truckId ? { 
+           ...t, 
+           currentWeight: Math.max(0, t.currentWeight - shipment.weight),
+           currentVolume: Math.max(0, t.currentVolume - shipment.volume)
+         } : t));
+       }
+    }
 
     setShipments(shipments.map(s => {
       if (s.id === booking.shipmentId) {
@@ -117,30 +140,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
       return s;
     }));
-
-    if (truckStatus) {
-      setTrucks(trucks.map(t => t.id === booking.truckId ? { ...t, status: truckStatus } : t));
-    }
-
-    if (status === "Confirmed") {
-      const shipment = shipments.find(s => s.id === booking.shipmentId);
-      setTrucks(trucks.map(t => t.id === booking.truckId ? { ...t, currentLoad: t.currentLoad + (shipment?.weight || 0) } : t));
-      addNotification("Booking Confirmed", `Operator accepted booking ${bookingId}.`, "booking");
-    }
-
-    if (status === "Delivered") {
-       addNotification("Shipment Delivered", `Booking ${bookingId} has been successfully delivered.`, "status");
-    }
   };
 
   const cancelBooking = (bookingId: string) => {
     const booking = bookings.find(b => b.id === bookingId);
     if (!booking) return;
+    
+    // Cancellation Rules: Do not allow cancel after delivery
+    if (booking.status === "Delivered") {
+      alert("Cannot cancel a delivered shipment.");
+      return;
+    }
 
     const shipment = shipments.find(s => s.id === booking.shipmentId);
     
-    if (booking.status === "Confirmed" || booking.status === "In Transit") {
-      setTrucks(trucks.map(t => t.id === booking.truckId ? { ...t, currentLoad: Math.max(0, t.currentLoad - (shipment?.weight || 0)) } : t));
+    // Capacity Logic: Restore if it was previously Confirmed
+    if ((booking.status === "Confirmed" || booking.status === "In Transit") && shipment) {
+      setTrucks(trucks.map(t => t.id === booking.truckId ? { 
+        ...t, 
+        currentWeight: Math.max(0, t.currentWeight - shipment.weight),
+        currentVolume: Math.max(0, t.currentVolume - shipment.volume)
+      } : t));
     }
 
     setBookings(bookings.map(b => b.id === bookingId ? { ...b, status: "Cancelled" } : b));
@@ -149,7 +169,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AppContext.Provider value={{ shipments, trucks, bookings, notifications, addShipment, addTruck, verifyTruck, createBooking, updateBookingStatus, cancelBooking, addNotification, markNotificationRead }}>
+    <AppContext.Provider value={{ shipments, trucks, bookings, notifications, addShipment, addTruck, verifyTruck, createBooking, updateBookingStatus, cancelBooking, addNotification }}>
       {children}
     </AppContext.Provider>
   );

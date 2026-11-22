@@ -38,6 +38,7 @@ type AppContextType = {
   updateBookingStatus: (bookingId: string, status: Booking["status"]) => void;
   cancelBooking: (bookingId: string) => void;
   addNotification: (title: string, message: string, type: Notification["type"]) => void;
+  markNotificationRead: (id: string) => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -56,10 +57,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     { id: "BKG-5001", shipmentId: "SHP-1001", truckId: "TRK-01", operator: "Northstar Trucking", cost: 3200, platformFee: 160, status: "Confirmed" }
   ]);
 
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([
+    { id: "NOT-1", title: "Welcome to LoadLoop", message: "Your account is ready.", time: "1 hour ago", read: false, type: "system" }
+  ]);
 
   const addNotification = (title: string, message: string, type: Notification["type"]) => {
     setNotifications(prev => [{ id: `NOT-${Date.now()}`, title, message, time: "Just now", read: false, type }, ...prev]);
+  };
+
+  const markNotificationRead = (id: string) => {
+    setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
   };
 
   const addShipment = (data: Omit<Shipment, "id" | "status" | "timeline">) => {
@@ -132,7 +139,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     const shipment = shipments.find(s => s.id === booking.shipmentId);
     
-    // Restore capacity
     if (booking.status === "Confirmed" || booking.status === "In Transit") {
       setTrucks(trucks.map(t => t.id === booking.truckId ? { ...t, currentLoad: Math.max(0, t.currentLoad - (shipment?.weight || 0)) } : t));
     }
@@ -143,7 +149,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AppContext.Provider value={{ shipments, trucks, bookings, notifications, addShipment, addTruck, verifyTruck, createBooking, updateBookingStatus, cancelBooking, addNotification }}>
+    <AppContext.Provider value={{ shipments, trucks, bookings, notifications, addShipment, addTruck, verifyTruck, createBooking, updateBookingStatus, cancelBooking, addNotification, markNotificationRead }}>
       {children}
     </AppContext.Provider>
   );

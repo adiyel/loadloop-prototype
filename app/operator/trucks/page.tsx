@@ -6,11 +6,21 @@ import { useApp } from "@/context/AppContext";
 export default function RegisterTruck() {
   const router = useRouter();
   const { addTruck } = useApp();
-  const [formData, setFormData] = useState({ plate: "", type: "Closed Van", capacity: "", route: "", departure: "" });
+  const [formData, setFormData] = useState({ 
+    plate: "", 
+    type: "Closed Van", 
+    maxCapacity: "", // Changed to match new type
+    route: "", 
+    departure: "" 
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addTruck(formData);
+    // Convert maxCapacity from string to number as expected by the context
+    addTruck({
+      ...formData,
+      maxCapacity: Number(formData.maxCapacity)
+    });
     router.push("/operator");
   };
 
@@ -33,8 +43,8 @@ export default function RegisterTruck() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">Max Capacity</label>
-          <input required type="text" placeholder="e.g., 2000 kg" className="w-full p-2.5 border rounded-lg bg-slate-50 focus:bg-white" onChange={e => setFormData({...formData, capacity: e.target.value})} />
+          <label className="block text-sm font-semibold mb-1">Max Capacity (kg)</label>
+          <input required type="number" placeholder="e.g., 2000" className="w-full p-2.5 border rounded-lg bg-slate-50 focus:bg-white" onChange={e => setFormData({...formData, maxCapacity: e.target.value})} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>

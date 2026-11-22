@@ -1,8 +1,12 @@
+"use client";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import { ArrowRight, ShieldCheck, Truck, CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Landing() {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen bg-slate-50 overflow-hidden relative">
       {/* Background decoration */}
@@ -10,11 +14,14 @@ export default function Landing() {
       
       <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto relative z-10">
         <Logo className="h-10" />
-        <div className="hidden md:flex gap-8 text-sm font-semibold text-slate-600">
-          <Link href="#" className="hover:text-brand-blue transition">Platform</Link>
-          <Link href="#" className="hover:text-brand-blue transition">Solutions</Link>
-          <Link href="#" className="hover:text-brand-blue transition">Pricing</Link>
+        
+        {/* Navigation Links */}
+        <div className="hidden md:flex gap-8 text-sm font-bold text-slate-600">
+          <button onClick={() => router.push("/platform")} className="hover:text-brand-blue transition">Platform</button>
+          <button onClick={() => router.push("/solutions")} className="hover:text-brand-blue transition">Solutions</button>
+          <button onClick={() => router.push("/pricing")} className="hover:text-brand-blue transition">Pricing</button>
         </div>
+
         <div className="flex gap-4">
           <Link href="/dashboard" className="px-5 py-2.5 text-sm font-bold text-brand-navy hover:bg-slate-200 rounded-lg transition">
             Log in
@@ -42,7 +49,7 @@ export default function Landing() {
         </p>
 
         <div className="mt-10 flex justify-center gap-4">
-          <Link href="/dashboard/loadboard" className="px-8 py-4 bg-brand-navy text-white rounded-xl font-bold text-lg hover:bg-slate-800 shadow-xl transition">
+          <Link href="/loadboard" className="px-8 py-4 bg-brand-navy text-white rounded-xl font-bold text-lg hover:bg-slate-800 shadow-xl transition">
             Find a Truck
           </Link>
           <Link href="/dashboard" className="px-8 py-4 bg-white text-brand-navy border-2 border-slate-200 rounded-xl font-bold text-lg hover:border-brand-blue hover:bg-slate-50 transition">
@@ -50,9 +57,8 @@ export default function Landing() {
           </Link>
         </div>
 
-        {/* Re-designed Hero Graphic Area */}
+        {/* Hero Graphic */}
         <div className="mt-24 relative max-w-4xl mx-auto">
-          {/* Floating Card 1 */}
           <div className="absolute -left-12 top-12 bg-white p-5 rounded-2xl shadow-xl border border-slate-100 w-48 text-left z-20 hidden md:block">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">On-Time Delivery</p>
             <p className="text-3xl font-bold text-brand-navy mt-1">98.4%</p>
@@ -61,15 +67,12 @@ export default function Landing() {
             </div>
           </div>
 
-          {/* Floating Card 2 */}
           <div className="absolute -right-12 top-32 bg-white p-5 rounded-2xl shadow-xl border border-slate-100 z-20 hidden md:block">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">Cost Saved</p>
             <p className="text-3xl font-bold text-brand-orange mt-1">₱24,500</p>
           </div>
 
-          {/* Main Mockup Window */}
           <div className="rounded-3xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
-            {/* Window Header */}
             <div className="bg-slate-100 px-4 py-3 flex items-center gap-2 border-b border-slate-200">
               <div className="h-3 w-3 rounded-full bg-rose-400"></div>
               <div className="h-3 w-3 rounded-full bg-amber-400"></div>
@@ -79,16 +82,13 @@ export default function Landing() {
               </div>
             </div>
             
-            {/* Window Body (Dashboard Preview) */}
             <div className="bg-slate-50 p-6 flex gap-6">
-              {/* Fake Sidebar */}
               <div className="w-48 hidden md:block space-y-2">
                 <div className="h-8 bg-brand-navy rounded-lg w-full mb-6"></div>
                 <div className="h-8 bg-white border border-slate-200 rounded-lg w-full"></div>
                 <div className="h-8 bg-white border border-slate-200 rounded-lg w-full"></div>
               </div>
               
-              {/* Fake Content */}
               <div className="flex-1 space-y-4">
                 <div className="flex gap-4">
                   <div className="flex-1 h-24 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center p-4">
@@ -106,7 +106,6 @@ export default function Landing() {
                      </div>
                   </div>
                 </div>
-                {/* Fake Table */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 h-48">
                    <div className="h-4 w-32 bg-slate-200 rounded mb-4"></div>
                    <div className="space-y-3">

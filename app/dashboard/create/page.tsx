@@ -6,11 +6,25 @@ import { useApp } from "@/context/AppContext";
 export default function CreateShipment() {
   const router = useRouter();
   const { addShipment } = useApp();
-  const [formData, setFormData] = useState({ origin: "", dest: "", cargo: "", weight: "", date: "" });
+  
+  // Keep the form state as strings so the inputs behave normally
+  const [formData, setFormData] = useState({ 
+    origin: "", 
+    dest: "", 
+    cargo: "", 
+    weight: "", 
+    date: "" 
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addShipment(formData);
+    
+    // Convert the weight string to a number before passing to context
+    addShipment({
+      ...formData,
+      weight: Number(formData.weight)
+    });
+    
     router.push("/dashboard/shipments");
   };
 
@@ -37,7 +51,7 @@ export default function CreateShipment() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold mb-1">Weight (kg)</label>
-            <input required type="text" className="w-full p-2.5 border rounded-lg bg-slate-50 focus:bg-white" onChange={e => setFormData({...formData, weight: e.target.value + " kg"})} />
+            <input required type="number" className="w-full p-2.5 border rounded-lg bg-slate-50 focus:bg-white" onChange={e => setFormData({...formData, weight: e.target.value})} />
           </div>
           <div>
             <label className="block text-sm font-semibold mb-1">Delivery Date</label>

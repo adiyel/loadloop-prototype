@@ -1,10 +1,10 @@
 "use client";
 import { useApp } from "@/context/AppContext";
 import Link from "next/link";
-import { ArrowUpRight, Package, Truck, Wallet } from "lucide-react";
+import { Package, Truck, Wallet } from "lucide-react";
 
 export default function MSMEDashboard() {
-  const { shipments } = useApp();
+  const { shipments, bookings } = useApp();
   
   return (
     <div className="space-y-6">
@@ -29,20 +29,27 @@ export default function MSMEDashboard() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {shipments.slice(0, 3).map((s) => (
-              <tr key={s.id} className="hover:bg-slate-50">
-                <td className="px-6 py-4 font-bold text-brand-navy">{s.id}</td>
-                <td className="px-6 py-4">{s.origin} to {s.dest}</td>
-                <td className="px-6 py-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    s.status === "Delivered" ? "bg-green-100 text-green-700" :
-                    s.status === "In Transit" ? "bg-blue-100 text-blue-700" :
-                    "bg-orange-100 text-orange-700"
-                  }`}>{s.status}</span>
-                </td>
-                <td className="px-6 py-4 font-semibold">{s.cost}</td>
-              </tr>
-            ))}
+            {shipments.slice(0, 3).map((s) => {
+              // Look up the cost from the booking, default to "Pending" if not booked
+              const booking = bookings.find(b => b.shipmentId === s.id);
+              const displayCost = booking ? `₱${booking.cost.toLocaleString()}` : "TBD";
+
+              return (
+                <tr key={s.id} className="hover:bg-slate-50">
+                  <td className="px-6 py-4 font-bold text-brand-navy">{s.id}</td>
+                  <td className="px-6 py-4">{s.origin} to {s.dest}</td>
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      s.status === "Delivered" ? "bg-green-100 text-green-700" :
+                      s.status === "In Transit" ? "bg-blue-100 text-blue-700" :
+                      s.status === "Matched" ? "bg-teal-100 text-teal-700" :
+                      "bg-orange-100 text-orange-700"
+                    }`}>{s.status}</span>
+                  </td>
+                  <td className="px-6 py-4 font-semibold">{displayCost}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

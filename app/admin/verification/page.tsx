@@ -21,15 +21,17 @@ export default function TruckVerification() {
                 <div className="p-3 bg-brand-light rounded-xl text-brand-blue"><FileText size={24}/></div>
                 <div>
                   <p className="font-bold text-brand-navy text-lg">{truck.id} - {truck.plate}</p>
-                  <p className="text-sm text-slate-500">{truck.type} - {truck.maxCapacity} kg - Route: {truck.route}</p>
+                  <p className="text-sm text-slate-500">
+                    {truck.type} - Max: {truck.maxWeight} kg / {truck.maxVolume} m³ - Route: {truck.route}
+                  </p>
                 </div>
               </div>
               
               <div className="flex gap-3 w-full md:w-auto">
-                <button onClick={() => verifyTruck(truck.id, "Rejected")} className="px-4 py-2 rounded-lg border border-rose-200 text-rose-600 font-semibold hover:bg-rose-50 flex items-center gap-2">
+                <button onClick={() => verifyTruck(truck.id, "Rejected")} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-rose-200 text-rose-600 font-semibold hover:bg-rose-50 transition">
                   <XCircle size={18}/> Reject
                 </button>
-                <button onClick={() => verifyTruck(truck.id, "Verified")} className="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 flex items-center gap-2">
+                <button onClick={() => verifyTruck(truck.id, "Verified")} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition">
                   <CheckCircle2 size={18}/> Approve
                 </button>
               </div>

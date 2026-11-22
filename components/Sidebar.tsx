@@ -13,7 +13,7 @@ export default function Sidebar() {
     { href: "/dashboard/shipments", label: "My Shipments", icon: PackageSearch },
     { href: "/dashboard/loadboard", label: "Load Board", icon: Map },
     { href: "/dashboard/billing", label: "Payments", icon: Wallet },
-    { href: "/dashboard/profile", label: "Profile", icon: User },
+    { href: "/dashboard/profile", label: "Profile", icon: User }, // Added
   ];
 
   const operatorLinks = [
@@ -21,15 +21,14 @@ export default function Sidebar() {
     { href: "/operator/trucks", label: "My Trucks", icon: Truck },
     { href: "/operator/routes", label: "Route Management", icon: Map },
     { href: "/operator/requests", label: "Shipment Requests", icon: AlertCircle },
-    { href: "/operator/earnings", label: "Earnings", icon: FileText },
-    { href: "/operator/earnings", label: "Earnings", icon: Wallet }, // Ensure you have this
+    { href: "/operator/earnings", label: "Earnings", icon: FileText }, // Added
   ];
 
   const adminLinks = [
     { href: "/admin", label: "Admin Console", icon: ShieldCheck },
     { href: "/admin/users", label: "User Management", icon: User },
-    { href: "/admin/verification", label: "Truck Verification", icon: FileText },
-    { href: "/admin/bookings", label: "Transactions", icon: Wallet }, // New link
+    { href: "/admin/verification", label: "Truck Verification", icon: FileText }, // Added
+    { href: "/admin/bookings", label: "Transactions", icon: Wallet }, // Added
   ];
 
   return (

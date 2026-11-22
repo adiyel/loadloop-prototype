@@ -1,15 +1,15 @@
 import Image from "next/image";
 
-export default function Logo({ className = "h-10 w-auto object-contain" }: { className?: string }) {
+export default function Logo({ className = "" }: { className?: string }) {
   return (
-    <div className="flex items-center">
+    <div className={`relative flex items-center ${className}`}>
       <Image
-        src="/loadloop-logo.png" // Ensure this matches your filename exactly
+        src="/loadloop-logo.png" // Ensure this is in the /public folder
         alt="LoadLoop Logo"
-        width={300}              // Set a high base width
-        height={80}              // Set a high base height
-        className={className}    // This will constrain it correctly
-        priority                 
+        width={200}              // Base width for Next.js optimization
+        height={50}              // Base height for Next.js optimization
+        className="object-contain w-auto h-8 md:h-10" // Auto width, clean height
+        priority
       />
     </div>
   );

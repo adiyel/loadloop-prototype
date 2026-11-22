@@ -8,14 +8,14 @@ export default function AdminBookings() {
     <div className="max-w-6xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-brand-navy">Transaction Management</h1>
       
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 text-slate-500">
             <tr>
               <th className="px-6 py-4 font-medium">Booking ID</th>
               <th className="px-6 py-4 font-medium">MSME</th>
-              <th className="px-6 py-4 font-medium">Shipment Route</th>
-              <th className="px-6 py-4 font-medium">Total Payment</th>
+              <th className="px-6 py-4 font-medium">Route</th>
+              <th className="px-6 py-4 font-medium">Total Paid</th>
               <th className="px-6 py-4 font-medium">Platform Fee</th>
               <th className="px-6 py-4 font-medium">Status</th>
             </tr>

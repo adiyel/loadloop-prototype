@@ -22,12 +22,14 @@ export default function Sidebar() {
     { href: "/operator/routes", label: "Route Management", icon: Map },
     { href: "/operator/requests", label: "Shipment Requests", icon: AlertCircle },
     { href: "/operator/earnings", label: "Earnings", icon: FileText },
+    { href: "/operator/earnings", label: "Earnings", icon: Wallet }, // Ensure you have this
   ];
 
   const adminLinks = [
     { href: "/admin", label: "Admin Console", icon: ShieldCheck },
     { href: "/admin/users", label: "User Management", icon: User },
     { href: "/admin/verification", label: "Truck Verification", icon: FileText },
+    { href: "/admin/bookings", label: "Transactions", icon: Wallet }, // New link
   ];
 
   return (

@@ -9,7 +9,7 @@ export default function MSMEDashboard() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-3">
-        <StatCard title="Active Shipments" value={shipments.filter(s => s.status !== 'Delivered').length.toString()} icon={Package} />
+        <StatCard title="Active Shipments" value={shipments.filter(s => s.status !== 'Delivered' && s.status !== 'Cancelled').length.toString()} icon={Package} />
         <StatCard title="Total Cost Saved" value="₱8,450" icon={Truck} />
         <StatCard title="Available Balance" value="₱12,000" icon={Wallet} />
       </div>
@@ -25,14 +25,13 @@ export default function MSMEDashboard() {
               <th className="px-6 py-4 font-medium">ID</th>
               <th className="px-6 py-4 font-medium">Route</th>
               <th className="px-6 py-4 font-medium">Status</th>
-              <th className="px-6 py-4 font-medium">Cost</th>
+              <th className="px-6 py-4 font-medium">Total Cost</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {shipments.slice(0, 3).map((s) => {
-              // Look up the cost from the booking, default to "Pending" if not booked
               const booking = bookings.find(b => b.shipmentId === s.id);
-              const displayCost = booking ? `₱${booking.cost.toLocaleString()}` : "TBD";
+              const displayCost = booking ? `₱${booking.totalCost.toLocaleString()}` : "TBD";
 
               return (
                 <tr key={s.id} className="hover:bg-slate-50">
@@ -42,7 +41,7 @@ export default function MSMEDashboard() {
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                       s.status === "Delivered" ? "bg-green-100 text-green-700" :
                       s.status === "In Transit" ? "bg-blue-100 text-blue-700" :
-                      s.status === "Matched" ? "bg-teal-100 text-teal-700" :
+                      s.status === "Cancelled" ? "bg-rose-100 text-rose-700" :
                       "bg-orange-100 text-orange-700"
                     }`}>{s.status}</span>
                   </td>
